@@ -814,7 +814,7 @@
         const ImageCacheManager = {
             cache: new Map(),
             loadingQueue: [],
-            maxConcurrent: 3,
+            maxConcurrent: 2,
             currentLoading: 0,
             hashUrl(url) { let h = 0; for (let i = 0; i < url.length; i++) { h = ((h << 5) - h) + url.charCodeAt(i); h = h & h; } return h.toString(36); },
             async getCachedImage(url) { if (!db) return null; return new Promise(r => { const tx = db.transaction('photos', 'readonly'); const req = tx.objectStore('photos').get('cache_' + this.hashUrl(url)); req.onsuccess = e => r(e.target.result ? e.target.result.data : null); req.onerror = () => r(null); }); },
@@ -983,7 +983,7 @@
                 if (ps?.length > 0) { ps.filter(p => !p.id.toString().startsWith('cache_') && !p.id.toString().startsWith('christmas_')).forEach(i => createPhotoTexture(i.data, i.id)); }
 
                 // 懒加载圣诞照片
-                loadChristmasPhotos();
+                setTimeout(() => loadChristmasPhotos(), 2000);  // 延迟加载，先显示树
 
                 const ms = await loadMusicFromDB();
                 if (ms) { bgmAudio.src = URL.createObjectURL(ms); } else { bgmAudio.src = DEFAULT_MUSIC_URL; }
